@@ -653,20 +653,37 @@
       return;
     }
 
-    var subject = encodeURIComponent('New Enquiry via Kaizen Ventures Website');
-    var body = encodeURIComponent(
-      'New message from the Kaizen Ventures website contact form.\n\n' +
-      'Name:    ' + fname + ' ' + lname + '\n' +
-      'Email:   ' + email + '\n' +
-      'Company: ' + (company || 'Not provided') + '\n' +
-      'Service: ' + (service || 'Not selected') + '\n\n' +
-      'Message:\n' + message
-    );
+    var btn = document.querySelector('.btn-submit');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
 
-    window.location.href = 'mailto:jayesh@kaizenventure.us?subject=' + subject + '&body=' + body;
-
-    document.getElementById('contactForm').style.display = 'none';
-    document.getElementById('formSuccess').style.display = 'block';
+    fetch('https://formspree.io/f/xaqdzvkz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        name:    fname + ' ' + lname,
+        email:   email,
+        company: company || 'Not provided',
+        service: service || 'Not selected',
+        message: message,
+        _subject: 'New Enquiry via Kaizen Ventures Website'
+      })
+    })
+    .then(function(res) {
+      if (res.ok) {
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try again or email jayesh@kaizenventure.us directly.');
+        btn.textContent = 'Send Message \u2192';
+        btn.disabled = false;
+      }
+    })
+    .catch(function() {
+      alert('Something went wrong. Please try again or email jayesh@kaizenventure.us directly.');
+      btn.textContent = 'Send Message \u2192';
+      btn.disabled = false;
+    });
   }
 </script>
 </body>

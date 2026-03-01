@@ -904,23 +904,43 @@
     if (e.target === document.getElementById('modalOverlay')) closeModal();
   }
   function submitLead() {
-    var name  = document.getElementById('leadName').value.trim();
-    var email = document.getElementById('leadEmail').value.trim();
+    var name    = document.getElementById('leadName').value.trim();
+    var email   = document.getElementById('leadEmail').value.trim();
     if (!name || !email) { alert('Please enter your name and email.'); return; }
     var phone   = document.getElementById('leadPhone').value;
     var address = document.getElementById('leadAddress').value;
     var message = document.getElementById('leadMessage').value;
-    var subject = encodeURIComponent('New Lead: ' + currentClient + ' via Kaizen Ventures');
-    var body = encodeURIComponent(
-      'New lead from the Kaizen Ventures Client Spotlight page.\n\n' +
-      'Interested in: ' + currentClient + '\n' +
-      'Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + '\n' +
-      'Location: ' + address + '\n\nMessage:\n' + message
-    );
-    window.location.href = 'mailto:jayesh@kaizenventure.us?subject=' + subject + '&body=' + body;
-    document.getElementById('modalFormWrap').style.display = 'none';
-    document.getElementById('successClient').textContent = currentClient;
-    document.getElementById('modalSuccess').style.display = 'block';
+
+    var btn = document.querySelector('#modalOverlay .btn-send');
+    if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
+
+    fetch('https://formspree.io/f/xaqdzvkz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        name:    name,
+        email:   email,
+        phone:   phone || 'Not provided',
+        location: address || 'Not provided',
+        message: message,
+        client:  currentClient,
+        _subject: 'New Lead: ' + currentClient + ' via Kaizen Ventures'
+      })
+    })
+    .then(function(res) {
+      if (res.ok) {
+        document.getElementById('modalFormWrap').style.display = 'none';
+        document.getElementById('successClient').textContent = currentClient;
+        document.getElementById('modalSuccess').style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try again.');
+        if (btn) { btn.textContent = 'Send Enquiry →'; btn.disabled = false; }
+      }
+    })
+    .catch(function() {
+      alert('Something went wrong. Please try again.');
+      if (btn) { btn.textContent = 'Send Enquiry →'; btn.disabled = false; }
+    });
   }
 
   function openProjectModal() {
@@ -937,29 +957,46 @@
     if (e.target === document.getElementById('projectModalOverlay')) closeProjectModal();
   }
   function submitProjectLead() {
-    var name   = document.getElementById('pName').value.trim();
-    var email  = document.getElementById('pEmail').value.trim();
-    var phone  = document.getElementById('pPhone').value.trim();
-    var desc   = document.getElementById('pDesc').value.trim();
+    var name  = document.getElementById('pName').value.trim();
+    var email = document.getElementById('pEmail').value.trim();
+    var phone = document.getElementById('pPhone').value.trim();
+    var desc  = document.getElementById('pDesc').value.trim();
     if (!name || !email || !phone) { alert('Please fill in your name, email, and phone number.'); return; }
     if (!desc) { alert('Please describe your project so we can help you better.'); return; }
     var loc    = document.getElementById('pLocation').value;
     var type   = document.getElementById('pType').value;
     var budget = document.getElementById('pBudget').value;
-    var subject = encodeURIComponent('New Project Request via Kaizen Ventures Client Page');
-    var body = encodeURIComponent(
-      'New project request submitted from the Kaizen Ventures Client Spotlight page.\n\n' +
-      'Name:     ' + name + '\n' +
-      'Email:    ' + email + '\n' +
-      'Phone:    ' + phone + '\n' +
-      'Location: ' + (loc || 'Not provided') + '\n' +
-      'Type:     ' + (type || 'Not selected') + '\n' +
-      'Budget:   ' + (budget || 'Not selected') + '\n\n' +
-      'Project Description:\n' + desc
-    );
-    window.location.href = 'mailto:jayesh@kaizenventure.us?subject=' + subject + '&body=' + body;
-    document.getElementById('projectFormWrap').style.display = 'none';
-    document.getElementById('projectModalSuccess').style.display = 'block';
+
+    var btn = document.querySelector('#projectModalOverlay .btn-send');
+    if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
+
+    fetch('https://formspree.io/f/xaqdzvkz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        name:     name,
+        email:    email,
+        phone:    phone,
+        location: loc || 'Not provided',
+        project_type:   type || 'Not selected',
+        budget:   budget || 'Not selected',
+        description: desc,
+        _subject: 'New Project Request via Kaizen Ventures'
+      })
+    })
+    .then(function(res) {
+      if (res.ok) {
+        document.getElementById('projectFormWrap').style.display = 'none';
+        document.getElementById('projectModalSuccess').style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try again.');
+        if (btn) { btn.textContent = 'Send My Request →'; btn.disabled = false; }
+      }
+    })
+    .catch(function() {
+      alert('Something went wrong. Please try again.');
+      if (btn) { btn.textContent = 'Send My Request →'; btn.disabled = false; }
+    });
   }
 
   // Keyboard close
