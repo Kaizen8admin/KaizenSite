@@ -547,7 +547,7 @@
       <h2>Ready to Grow Your Business?</h2>
       <p>Let's have a no-pressure conversation about where your business is and where you want it to go. We'll tell you honestly whether and how we can help.</p>
       <div class="contact-detail"><span class="contact-detail-icon">📍</span> Serving businesses across the US</div>
-      <div class="contact-detail"><span class="contact-detail-icon">✉️</span> hello@kaizenventure.us</div>
+      <div class="contact-detail"><span class="contact-detail-icon">✉️</span> jayesh@kaizenventure.us</div>
       <div class="contact-detail"><span class="contact-detail-icon">⏱️</span> We respond within 24 hours</div>
       <div style="margin-top:2.5rem;padding:1.5rem;background:rgba(26,110,191,0.1);border:1px solid rgba(26,110,191,0.25);border-radius:12px;">
         <p style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:1.65;">Our initial consultation is <strong style="color:var(--gold);">completely free</strong>. We'll assess your business, identify the biggest growth opportunities, and share our thinking — no strings attached.</p>
@@ -639,12 +639,30 @@
 
   // Form submit
   function handleSubmit() {
-    const fname = document.getElementById('fname').value;
-    const email = document.getElementById('email').value;
+    var fname   = document.getElementById('fname').value.trim();
+    var lname   = document.getElementById('lname').value.trim();
+    var email   = document.getElementById('email').value.trim();
+    var company = document.getElementById('company').value.trim();
+    var service = document.getElementById('service').value;
+    var message = document.getElementById('message').value.trim();
+
     if (!fname || !email) {
-      alert('Please fill in at least your name and email.');
+      alert('Please fill in your name and email address.');
       return;
     }
+
+    var subject = encodeURIComponent('New Enquiry via Kaizen Ventures Website');
+    var body = encodeURIComponent(
+      'New message from the Kaizen Ventures website contact form.\n\n' +
+      'Name:    ' + fname + ' ' + lname + '\n' +
+      'Email:   ' + email + '\n' +
+      'Company: ' + (company || 'Not provided') + '\n' +
+      'Service: ' + (service || 'Not selected') + '\n\n' +
+      'Message:\n' + message
+    );
+
+    window.location.href = 'mailto:jayesh@kaizenventure.us?subject=' + subject + '&body=' + body;
+
     document.getElementById('contactForm').style.display = 'none';
     document.getElementById('formSuccess').style.display = 'block';
   }
